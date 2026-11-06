@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Dictat a la finestra (inicia / atura)
+Comment=Clic: comença a dictar. Altre clic: atura i escriu el text a la finestra activa, sense Retorn
+Exec=@BIN@/dictat-alterna finestra
+Icon=input-keyboard
+Terminal=false
+Categories=Utility;Accessibility;
+StartupNotify=false

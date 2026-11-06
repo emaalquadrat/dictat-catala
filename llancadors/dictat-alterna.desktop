@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Dictat (inicia / atura)
+Comment=Clic: comença a dictar en català. Altre clic: atura i copia el text al porta-retalls
+Exec=@BIN@/dictat-alterna portaretalls
+Icon=audio-input-microphone
+Terminal=false
+Categories=Utility;Accessibility;
+StartupNotify=false

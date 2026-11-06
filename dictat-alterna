@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# dictat-alterna — Dictat en català amb Speech Note (net.mkiol.SpeechNote).
+# Un clic (o drecera) inicia l'escolta; el següent l'atura i lliura el text.
+#
+# Ús: dictat-alterna [portaretalls|finestra]
+#   portaretalls (per defecte): el text va al porta-retalls.
+#   finestra: el text s'escriu a la finestra activa (sense prémer Retorn).
+#
+# Copyright (C) 2026 Trama Educació — https://trama.emaalquadrat.cat
+# Llicència: GPL-3.0-or-later (vegeu LICENSE).
+
+APP=net.mkiol.SpeechNote
+MODE="${1:-portaretalls}"
+
+# Estat de Speech Note: 3 = inactiu; 4, 5 o 7 = escoltant.
+estat() {
+    flatpak run "$APP" --print-state general 2>/dev/null | awk 'NR==2{gsub(/[^0-9]/,""); print}'
+}
+
+S="$(estat)"
+
+# Si Speech Note no respon, l'obrim a la safata i esperem que estigui llest.
+if [ -z "$S" ] || [ "$S" = "0" ]; then
+    notify-send -i audio-input-microphone "Dictat" "Obrint Speech Note… un moment" 2>/dev/null
+    setsid flatpak run "$APP" --start-in-tray >/dev/null 2>&1 < /dev/null &
+    for _ in $(seq 1 40); do
+        sleep 0.5
+        S="$(estat)"
+        [ "$S" = "3" ] && break
+    done
+fi
+
+case "$S" in
+    4|5|7)  # escoltant -> aturar
+        flatpak run "$APP" --action stop-listening >/dev/null 2>&1
+        ;;
+    *)
+        if [ "$MODE" = "finestra" ]; then
+            flatpak run "$APP" --action start-listening-active-window >/dev/null 2>&1
+        else
+            flatpak run "$APP" --action start-listening-clipboard >/dev/null 2>&1
+        fi
+        ;;
+esac

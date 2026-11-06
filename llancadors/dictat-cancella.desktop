@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Cancel·la el dictat
+Comment=Atura sense transcriure
+Exec=flatpak run net.mkiol.SpeechNote --action cancel
+Icon=process-stop
+Terminal=false
+Categories=Utility;Accessibility;
+StartupNotify=false
