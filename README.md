@@ -9,7 +9,7 @@ Funciona sobre [Speech Note](https://github.com/mkiol/dsnote), una aplicació ll
 - **Drecera de teclat** opcional: `Super + Z`.
 - **El text no s'envia mai sol:** queda escrit perquè el revisis.
 
-Explicació del procés a la Bitàcola de Trama: [Dictar en català sense enviar la veu a ningú](https://trama.emaalquadrat.cat/?p=82).
+Explicació del procés a la Bitàcola de Trama: [Dictar en català sense enviar la veu a ningú](https://trama.emaalquadrat.cat/2026/11/06/dictar-en-catala-sense-enviar-la-veu/).
 
 ## Requisits
 
