@@ -1,0 +1,14 @@
+﻿DICTAT EN CATALÀ PER A WINDOWS (Trama Educació)
+
+1. Fes doble clic a «instala-dictat-catala».
+   Si surt l'avís blau «Windows ha protegit l'ordinador»,
+   prem «Més informació» i després «Executa igualment».
+
+2. Espera. La primera vegada triga uns minuts i cal internet.
+
+3. Per dictar:
+   - Fes clic on vulguis escriure.
+   - Prem Ctrl + Majúscules (una tecla amb cada mà serveix) i parla.
+   - Prem Ctrl per acabar: el text s'escriu on hi ha el cursor.
+
+Guia completa: https://github.com/emaalquadrat/dictat-catala#windows

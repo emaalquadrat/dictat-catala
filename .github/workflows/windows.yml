@@ -1,0 +1,73 @@
+# Prova l'instal·lador de Windows en una màquina Windows real i, si la pujada
+# és d'una etiqueta de versió (p. ex. v1.0.0), publica el .zip a Releases.
+name: Windows
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prova:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Executa l'instal·lador (sense obrir el programa)
+        shell: cmd
+        env:
+          DICTAT_NO_OBRIS: "1"
+        run: call windows\instala-dictat-catala.cmd < nul
+      - name: Comprova que tot és al seu lloc
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:LOCALAPPDATA 'Programs\WhisperLocal\whisper-local.exe'
+          $conf = Join-Path $env:APPDATA 'whisperkey\user_settings.yaml'
+          $icona = Join-Path ([Environment]::GetFolderPath('Desktop')) ('Dictat en catal' + [char]0x00E0 + '.lnk')
+          foreach ($f in @($exe, $conf, $icona)) {
+            if (-not (Test-Path $f)) { throw "Falta: $f" }
+            Write-Host "OK  $f"
+          }
+          $a = Get-FileHash $conf; $b = Get-FileHash windows\user_settings.yaml
+          if ($a.Hash -ne $b.Hash) { throw "La configuració copiada no és la del repositori" }
+          $l = (New-Object -ComObject WScript.Shell).CreateShortcut($icona)
+          if ($l.TargetPath -ne $exe) { throw "La icona no apunta al programa: $($l.TargetPath)" }
+          Write-Host "La icona apunta a $($l.TargetPath)"
+      - name: Una segona instal·lació guarda còpia de la configuració anterior
+        shell: cmd
+        env:
+          DICTAT_NO_OBRIS: "1"
+        run: |
+          call windows\instala-dictat-catala.cmd < nul
+          if not exist "%APPDATA%\whisperkey\user_settings.abans-dictat-catala.yaml" exit /b 1
+      - name: Prepara el .zip per descarregar
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory dictat-catala-windows | Out-Null
+          Copy-Item windows\instala-dictat-catala.cmd, windows\user_settings.yaml, windows\LLEGEIX-M.txt, LICENSE dictat-catala-windows
+          Compress-Archive dictat-catala-windows dictat-catala-windows.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dictat-catala-windows.zip
+
+  publica:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: prova
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows
+      - name: Crea la versió a Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dictat-catala-windows.zip \
+            --title "Dictat en català ${GITHUB_REF_NAME#v}" \
+            --notes-file windows/notes-versio.md

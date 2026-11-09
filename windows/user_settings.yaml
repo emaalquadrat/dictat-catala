@@ -1,0 +1,80 @@
+# Dictat en català per a Windows — configuració de Trama per a Whisper Local
+# https://github.com/emaalquadrat/dictat-catala
+#
+# Whisper Local (https://github.com/drajb/whisper-local, llicència MIT) fa la
+# feina. Aquest fitxer només en canvia uns quants valors perquè:
+#   - entengui i escrigui en català,
+#   - es pugui fer servir prement dues tecles separades, una amb cada mà,
+#   - escolti amb calma fins que l'aturis.
+#
+# Va a: %APPDATA%\whisperkey\user_settings.yaml
+# (l'instal·lador `instala-dictat-catala.cmd` el posa al seu lloc).
+#
+# Copyright (C) 2026 Trama Educació — GPL-3.0-or-later.
+
+whisper:
+    # Model «Small»: el mateix que es fa servir al dictat de Linux. Va bé en
+    # ordinadors normals, sense targeta gràfica (uns segons per frase).
+    model: small
+
+    # Sempre en català (no intenta endevinar l'idioma).
+    language: ca
+
+    # Model alternatiu per a ordinadors potents: el Whisper gran entrenat pel
+    # BSC i el Projecte AINA amb més de 3.000 hores de català, amb puntuació.
+    # Ocupa uns 3 GB i en un ordinador modest és lent. Es tria al menú de la
+    # icona, a «Model».
+    models:
+        catala-aina:
+            source: BSC-LT/faster-whisper-large-v3-ca-punctuated-3370h
+            label: "Català AINA/BSC amb puntuació (3 GB, ordinadors potents)"
+            group: custom
+            enabled: true
+
+hotkey:
+    # Comença a escoltar: Ctrl + Majúscules (una tecla amb cada mà serveix:
+    # el Ctrl d'un costat i la Majúscula de l'altre).
+    recording_hotkey: "ctrl+shift"
+
+    # Un toc per començar i un altre per acabar: no cal mantenir les tecles
+    # premudes mentre es parla.
+    recording_mode: toggle
+
+    # Atura i escriu el text: Ctrl, sol.
+    stop_key: "ctrl"
+
+postprocess:
+    # Signes dictats. Quan es dicta, Whisper ja posa punts i comes sol; aquestes
+    # expressions serveixen per forçar-los quan cal. Són les dels dictats de
+    # l'escola i les formes més habituals: s'han triat perquè no apareguin en
+    # una frase normal (per això «punt» sol no hi és). L'ordre importa: parèntesis
+    # i cometes van primer perquè no s'empassin el signe que els segueix. «Coma»
+    # no hi és a propòsit: també vol dir una altra cosa («va entrar en coma»), i
+    # Whisper ja posa les comes sol quan es fa una pausa.
+    inline_formatting: true
+    inline_formatting_absorb_punctuation: true
+    inline_formatting_replacements:
+        - phrase: obre parèntesi
+          replacement: " ("
+        - phrase: tanca parèntesi
+          replacement: ") "
+        - phrase: obre cometes
+          replacement: " «"
+        - phrase: tanca cometes
+          replacement: "» "
+        - phrase: punt i a part
+          replacement: ".\n"
+        - phrase: punt i seguit
+          replacement: ". "
+        - phrase: punt i coma
+          replacement: "; "
+        - phrase: punt final
+          replacement: "."
+        - phrase: dos punts
+          replacement: ": "
+        - phrase: nova línia
+          replacement: "\n"
+        - phrase: signe d'interrogació
+          replacement: "? "
+        - phrase: signe d'exclamació
+          replacement: "! "
